@@ -11,12 +11,13 @@ I build secure, scalable backend architectures and robust RESTful APIs. My focus
 ---
 ### 💻 Featured Projects
 
-#### [Remitlytics Core Engine](https://github.com/Sidharth-Async/remitlytics-core.git)
-*An event-driven, fault-tolerant financial backend designed to handle invoice lifecycles and guarantee transaction integrity.*
-* **Tech Stack:** Java 21, Spring Boot 3, PostgreSQL, Flyway, Docker
-* **Event-Driven Architecture:** Implemented asynchronous webhook dispatching using `@TransactionalEventListener` to guarantee external third-party notifications only fire after successful database commits, preventing phantom reads.
-* **Resilience:** Engineered a custom fault-tolerance mechanism utilizing exponential backoff and a PostgreSQL-backed Dead Letter Queue (DLQ) to safely park and recover failed webhook deliveries.
-* **Data Integrity:** Designed a strict state-machine (DRAFT ➔ SENT ➔ PAID) that automatically triggers an immutable double-entry ledger system to ensure credits and debits always balance.
+#### [Remitlytics | Financial Core Engine & Invoicing Platform](https://github.com/Sidharth-Async/remitlytics-core.git)
+*An event-driven, fault-tolerant financial backend and dashboard guaranteeing double-entry accounting integrity and zero-data-loss event delivery.*
+* **Tech Stack:** Java 21, Spring Boot 3.3, PostgreSQL 16, Bucket4j, Flyway, Docker, Next.js 16
+* **Double-Entry Ledger & State Invariants:** Architected an append-only, multi-tenant double-entry ledger enforcing balanced debit/credit transaction boundaries in PostgreSQL across `DRAFT ➔ SENT ➔ PAID/OVERDUE` invoice lifecycles.
+* **Event-Driven Webhook Pipeline:** Decoupled external HTTP notifications using `@Async` event workers bound to `@TransactionalEventListener(AFTER_COMMIT)`, dropping API response latencies below 50ms and preventing phantom notifications on rolled-back transactions.
+* **Resilience & Replay Engine:** Built an exponential backoff retry state machine with PostgreSQL-backed delivery tracking, dead-letter storage, and administrative replay endpoints (`/retry`) to recover failed dispatches.
+* **Zero-Bypass Traffic Shaping:** Implemented an `@Order(1)` Bucket4j token-bucket servlet filter enforcing 300 req/min backpressure ahead of Spring's DispatcherServlet, complete with CORS preflight handling and standard `429 Too Many Requests` headers.
 
 #### [Sentinel (Distributed Task Queue)](https://github.com/Sidharth-Async/task-queue-backend.git)
 *Engineered a horizontally scalable background task processing queue to handle concurrent workloads without data corruption.*
